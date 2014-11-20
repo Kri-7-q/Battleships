@@ -7,6 +7,11 @@
 Battleships::Battleships() :
     shotsFired(0)
 {
+    defaultShips.insert("Aircraft carrier", 5);
+    defaultShips.insert("Battleship", 4);
+    defaultShips.insert("Submarine", 3);
+    defaultShips.insert("Cruiser", 3);
+    defaultShips.insert("Destroyer", 2);
 }
 
 // Getter
@@ -16,8 +21,8 @@ QString Battleships::getPlayerName() const
 }
 
 // Setter
-void Battleships::setPlayerName(const QString &value)
+void Battleships::setPlayerName(const QString name)
 {
-    playerName = value;
+    playerName = name;
 }
 

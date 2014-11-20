@@ -3,6 +3,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QSize>
+#include <QHash>
+#include "board.h"
 
 class ConsoleInterface
 {
@@ -16,6 +18,8 @@ public:
     QString getPlayerName();
     QSize getBoardSize();
     QString getPositionForShip(const QString description);
+    void drawGameBoard(Board &gameBoard);
+    QHash<QString, int> getCustomShips();
 
 protected:
     QSize getSizeObject(const QString input);

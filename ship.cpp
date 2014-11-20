@@ -4,13 +4,23 @@
  * Constructor
  * Constructs a battleship.
  * @param length        The size (length) of the battleship.
- * @param description   A description (type) of a battleship.
  */
-Ship::Ship(const quint8 length, const QString description, const QRect position) :
+Ship::Ship(const quint8 length) :
+    length(length)
+{
+}
+
+/**
+ * Constructor
+ * Constructs a battleship with its position on map.
+ * @param length        The ships size (lenght).
+ * @param position      The position on the map.
+ */
+Ship::Ship(const quint8 length, const QRect position) :
     length(length),
-    description(description),
     position(position)
 {
+
 }
 
 /**

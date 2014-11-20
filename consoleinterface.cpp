@@ -54,6 +54,47 @@ QString ConsoleInterface::getPositionForShip(const QString description)
 }
 
 /**
+ * Draw the game board to the console.
+ * @param gameBoard
+ */
+void ConsoleInterface::drawGameBoard(Board &gameBoard)
+{
+    gameBoard.print();
+}
+
+/**
+ * Ask the player for its ships.
+ * The player creates a custom ship list.
+ * @return customShips      A map with ship names and its size (length).
+ */
+QHash<QString, int> ConsoleInterface::getCustomShips()
+{
+    QHash<QString, int> customShips;
+    while (1) {
+        cout << "Name of ship [empty to quit] :" << endl;
+        cout << "> ";
+        QString name = cin.readLine();
+        if (name.isEmpty()) {
+            break;
+        }
+        int length;
+        while (1) {
+            cout << "The size (length) of that ship :" << endl;
+            cout << "> ";
+            QString size = cin.readLine();
+            bool ok;
+            length = size.toInt(&ok);
+            if (ok) {
+                break;
+            }
+        }
+        customShips.insert(name, length);
+    }
+
+    return customShips;
+}
+
+/**
  * Takes a string with komma seperated integer values.
  * These values are put into a QSize object.
  * @param input     A string with to integer values komma seperated.

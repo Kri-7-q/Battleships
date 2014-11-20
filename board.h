@@ -3,6 +3,7 @@
 #include <QList>
 #include <QPoint>
 #include <QHash>
+#include <QRect>
 #include "ship.h"
 #include "EnumType.h"
 
@@ -15,10 +16,9 @@ protected:
     const QString emptyField;
     const QString hiddenField;
     const QString hiddenShip;
-    const quint8 width;
-    const quint8 height;
+    QRect mapRect;
     QList<Ship> shipList;
-    QHash<QPoint, bool> shotMap;
+    QHash<int, bool> shotMap;
 
 public:
     // Methods
@@ -27,7 +27,8 @@ public:
     void print();
 
 protected:
-    QString getFieldState(const QPoint point);
+    QString getFieldState(const QPoint &point);
+    int getFieldNumber(const QPoint &point)        { return point.y() * mapRect.width() + point.x(); }
 };
 
 #endif // BOARD_H
