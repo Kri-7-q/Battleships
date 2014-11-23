@@ -6,7 +6,8 @@
  * @param length        The size (length) of the battleship.
  */
 Ship::Ship(const quint8 length) :
-    length(length)
+    length(length),
+    hits(0)
 {
 }
 
@@ -18,9 +19,18 @@ Ship::Ship(const quint8 length) :
  */
 Ship::Ship(const quint8 length, const QRect position) :
     length(length),
-    position(position)
+    position(position),
+    hits(0)
 {
 
+}
+
+/**
+ * Ship is hidden by a shot.
+ */
+void Ship::addHit()
+{
+    ++hits;
 }
 
 /**
@@ -33,19 +43,20 @@ Ship::Ship(const quint8 length, const QRect position) :
  */
 QRect Ship::getShipPositionRect(const QPoint point, const quint8 length, const Direction direction)
 {
+    const int l = length - 1;
     QRect rect;
     switch (direction) {
     case Up:
-        rect.setCoords(point.x(), point.y()-length, point.x(), point.y());
+        rect.setCoords(point.x(), point.y()-l, point.x(), point.y());
         break;
     case Down:
-        rect.setCoords(point.x(), point.y(), point.x(), point.y()+length);
+        rect.setCoords(point.x(), point.y(), point.x(), point.y()+l);
         break;
     case Left:
-        rect.setCoords(point.x()-length, point.y(), point.x(), point.y());
+        rect.setCoords(point.x()-l, point.y(), point.x(), point.y());
         break;
     case Right:
-        rect.setCoords(point.x(), point.y(), point.x()+length, point.y());
+        rect.setCoords(point.x(), point.y(), point.x()+l, point.y());
         break;
     default:
         break;

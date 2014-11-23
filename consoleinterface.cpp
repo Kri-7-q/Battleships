@@ -7,7 +7,8 @@
  */
 ConsoleInterface::ConsoleInterface() :
     cin(stdin),
-    cout(stdout)
+    cout(stdout),
+    err(stderr)
 {
 }
 
@@ -41,8 +42,8 @@ QSize ConsoleInterface::getBoardSize()
  * No input (empty string) if user wants the ship to be placed automatically.
  * Otherwise the returning string should contain komma seperated
  * coordinates and the direction.
- * @param description
- * @return
+ * @param description       The description of the ship.
+ * @return                  A string with coordinates and direction of ship.
  */
 QString ConsoleInterface::getPositionForShip(const QString description)
 {
@@ -92,6 +93,34 @@ QHash<QString, int> ConsoleInterface::getCustomShips()
     }
 
     return customShips;
+}
+
+/**
+ * Asks the player for its shot.
+ * @return      The input string.
+ */
+QString ConsoleInterface::getShot()
+{
+    cout << "Where do you like to shoot to [x,y] ?" << endl;
+    cout << "> ";
+
+    return cin.readLine();
+}
+
+/**
+ * Ask the player if he wants to create custom ships.
+ * @return      True if input was either 'j' or 'J'. Else false.
+ */
+bool ConsoleInterface::wantCustomShips()
+{
+    cout << "Do you like to create your own ships [j/n] ?" << endl;
+    cout << "> ";
+    QString input = cin.readLine();
+    if (input.startsWith("j") || input.startsWith("J")) {
+        return true;
+    }
+
+    return false;
 }
 
 /**

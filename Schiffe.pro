@@ -25,5 +25,5 @@ HEADERS += \
     battleships.h \
     board.h \
     ship.h \
-    EnumType.h \
-    consoleinterface.h
+    consoleinterface.h \
+    Utilities.h

@@ -7,10 +7,10 @@
  * @param heigh
  */
 Board::Board(const quint8 width, const quint8 height) :
-    mapRect(0, 0, width, height),
+    boardRect(0, 0, width, height),
     emptyField(" ~ "),
-    hiddenField(" x "),
-    hiddenShip(" * ")
+    hiddenField(" o "),
+    hiddenShip(" X ")
 {
 }
 
@@ -27,7 +27,7 @@ Board::Board(const quint8 width, const quint8 height) :
 bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Direction d)
 {
     QRect shipRect = Ship::getShipPositionRect(QPoint(x, y), ship.getLength(), d);
-    if (! mapRect.contains(shipRect)) {
+    if (! boardRect.contains(shipRect)) {
         return false;
     }
     for (Ship placedShip : shipList) {
@@ -43,30 +43,20 @@ bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Directi
 
 /**
  * Place a shoot at a given position.
- * Return false if shot gone into the water.
- * Returns true if a ship was hidden at a undestroyed
- * position.
+ * Marks a new hit on a ship.
+ * It does not test if shoot is within game board.
  * @param x
  * @param y
- * @return          True if a ship was hidden.
+ * @return          True if ship was hidden.
  */
 bool Board::shoot(const quint8 x, const quint8 y)
 {
-    bool defaultValue = false;
     QPoint shotPosition(x, y);
+    bool isHit = shotMayHitShip(shotPosition);
     int fieldNumber = getFieldNumber(shotPosition);
-    if (shotMap.value(fieldNumber, defaultValue)) {
-        return false;
-    }
     shotMap.insert(fieldNumber, true);
-    for (Ship ship : shipList) {
-        if (ship.isHidden(shotPosition)) {
-            ship.addHit();
-            return true;
-        }
-    }
 
-    return false;
+    return isHit;
 }
 
 /**
@@ -74,13 +64,19 @@ bool Board::shoot(const quint8 x, const quint8 y)
  */
 void Board::print()
 {
-    QString horzLine(mapRect.width()*4+1, '-');
-    horzLine.append("\n");
+    QString horzLine(boardRect.width()*4+1, '-');
+    horzLine.prepend("  ").append("\n");
 
+    printf("  ");
+    for (quint8 x=0; x<boardRect.width(); ++x) {
+        printf("  %i ", x);
+    }
+    printf("\n");
     QString field;
-    for (quint8 y=0; y<mapRect.height(); ++y) {
+    for (quint8 y=0; y<boardRect.height(); ++y) {
         printf(horzLine.toUtf8().data());
-        for (quint8 x=0; x<mapRect.width(); ++x) {
+        printf("%i ", y);
+        for (quint8 x=0; x<boardRect.width(); ++x) {
             QPoint pt(x, y);
             field = getFieldState(pt);
             printf("|%s", field.toUtf8().data());
@@ -91,22 +87,59 @@ void Board::print()
 }
 
 /**
+ * Check if there is any ship left.
+ * @return      False if all ships are destroyed.
+ */
+bool Board::hasUndestroyedShip()
+{
+    for (Ship ship : shipList) {
+        if (! ship.isDestroyed()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Checks if a field contains a shot or a hidden ship.
  * @param point     The field (position) on the game board.
  * @return          A string which shows the state of field.
  */
 QString Board::getFieldState(const QPoint &point)
 {
+    bool defaultValue = false;
+    int fieldNumber = getFieldNumber(point);
+    bool isFieldHidden = shotMap.value(fieldNumber, defaultValue);
     for (Ship ship : shipList) {
-        if (ship.isHidden(point)) {
+        if (ship.isOnShip(point) && isFieldHidden) {
             return hiddenShip;
         }
     }
-    bool defaultValue = false;
-    int fieldNumber = getFieldNumber(point);
-    if (shotMap.value(fieldNumber, defaultValue)) {
+    if (isFieldHidden) {
         return hiddenField;
     }
 
     return emptyField;
+}
+
+/**
+ * Mark a ship hidden if shot was a hit.
+ * @param shotPosition
+ */
+bool Board::shotMayHitShip(QPoint shotPosition)
+{
+    bool defaultValue = false;
+    int fieldNumber = getFieldNumber(shotPosition);
+    bool wasHiddenBefore = shotMap.value(fieldNumber, defaultValue);
+    if (! wasHiddenBefore) {
+        for (Ship &ship : shipList) {
+            if (ship.isOnShip(shotPosition)) {
+                ship.addHit();
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
