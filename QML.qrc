@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>GameGUI.qml</file>
+        <file>SettingsDialog.qml</file>
+    </qresource>
+</RCC>

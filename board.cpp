@@ -106,7 +106,7 @@ bool Board::hasUndestroyedShip()
  * @param point     The field (position) on the game board.
  * @return          A string which shows the state of field.
  */
-QString Board::getFieldState(const QPoint &point)
+QString Board::getFieldState(const QPoint &point) const
 {
     bool defaultValue = false;
     int fieldNumber = getFieldNumber(point);

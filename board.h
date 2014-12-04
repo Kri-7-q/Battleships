@@ -42,9 +42,10 @@ public:
     bool isWithinGameBoard(const QPoint pt)         { return boardRect.contains(pt); }
 
 protected:
-    QString getFieldState(const QPoint &point);
-    int getFieldNumber(const QPoint &point)        { return point.y() * boardRect.width() + point.x(); }
+    QString getFieldState(const QPoint &point) const;
+    int getFieldNumber(const QPoint &point) const        { return point.y() * boardRect.width() + point.x(); }
     bool shotMayHitShip(QPoint shotPosition);
+
 };
 
 #endif // BOARD_H
