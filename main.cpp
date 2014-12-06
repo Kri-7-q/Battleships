@@ -4,7 +4,6 @@
 #include "battleships.h"
 #include "consoleinterface.h"
 #include "board.h"
-#include "gameboardmodel.h"
 
 
 int main(int argc, char *argv[])
@@ -13,7 +12,7 @@ int main(int argc, char *argv[])
     if (argc < 2 && QString(argv[1]) != "-c") {
         QApplication app(argc, argv);
 
-        qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
+        //qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
 
         QQmlApplicationEngine engine;
         engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));

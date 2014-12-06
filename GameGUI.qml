@@ -26,8 +26,24 @@ ApplicationWindow {
         color: "lightblue"
     }
 
-    SettingsDialog {
-        state: "dialog_visible"
+    //    SettingsDialog {
+    //        state: "dialog_visible"
+    //    }
+
+    Item {
+        id: gridModel
+        property int columns: 10
+        property int rows: 7
     }
 
+    GameBoardView {
+        id: foe
+        name: "Foe"
+    }
+
+    GameBoardView {
+        id: own
+        name: "Christian"
+        anchors.right: background.right
+    }
 }

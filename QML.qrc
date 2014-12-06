@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>GameGUI.qml</file>
         <file>SettingsDialog.qml</file>
+        <file>GameBoardView.qml</file>
     </qresource>
 </RCC>
