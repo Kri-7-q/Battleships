@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import Models 1.0
 
 ApplicationWindow {
     width: 960
@@ -30,20 +31,22 @@ ApplicationWindow {
     //        state: "dialog_visible"
     //    }
 
-    Item {
-        id: gridModel
-        property int columns: 10
-        property int rows: 7
+    GameBoardModel {
+        id: gameBoardModel
+        columns: 10
+        rows: 10
     }
 
     GameBoardView {
         id: foe
         name: "Foe"
+        cursor: Qt.CrossCursor
     }
 
     GameBoardView {
         id: own
         name: "Christian"
+        cursor: Qt.PointingHandCursor
         anchors.right: background.right
     }
 }

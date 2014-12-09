@@ -1,21 +1,30 @@
 #include "board.h"
 
 /**
+ * Standard constructor
+ */
+Board::Board()
+{
+
+}
+
+/**
  * Contrutor
  * Constructs a game board with a given width and heigh.
  * @param width
  * @param heigh
  */
 Board::Board(const quint8 width, const quint8 height) :
-    boardRect(0, 0, width, height),
-    emptyField(" ~ "),
-    hiddenField(" o "),
-    hiddenShip(" X ")
+    emptyFieldString(" ~ "),
+    hiddenFieldString(" o "),
+    hiddenShipString(" X ")
 {
+    model.setColumns(width);
+    model.setRows(height);
 }
 
 /**
- * Places a any ship to a given position.
+ * Places any ship to a given position.
  * Ship must be placed inside the game board.
  * Ship must not overlap another ship.
  * @param ship          The ship to place.
@@ -26,24 +35,18 @@ Board::Board(const quint8 width, const quint8 height) :
  */
 bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Direction d)
 {
-    QRect shipRect = Ship::getShipPositionRect(QPoint(x, y), ship.getLength(), d);
-    if (! boardRect.contains(shipRect)) {
+    QRect shipRect = Ship::getShipPositionRect(QPoint(x, y), ship.length(), d);
+    if (! model.gameBoardRect().contains(shipRect)) {
         return false;
     }
-    for (Ship placedShip : shipList) {
-        if (placedShip.getPosition().intersects(shipRect)) {
-            return false;
-        }
-    }
-    Ship newShip(ship.getLength(), shipRect);
-    shipList.append(newShip);
+    Ship newShip(ship.length(), shipRect);
 
-    return true;
+    return model.placeShip(newShip);
 }
 
 /**
  * Place a shoot at a given position.
- * Marks a new hit on a ship.
+ * Adds a hit on a ship if shot hit a ship.
  * It does not test if shoot is within game board.
  * @param x
  * @param y
@@ -51,10 +54,18 @@ bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Directi
  */
 bool Board::shoot(const quint8 x, const quint8 y)
 {
-    QPoint shotPosition(x, y);
-    bool isHit = shotMayHitShip(shotPosition);
-    int fieldNumber = getFieldNumber(shotPosition);
-    shotMap.insert(fieldNumber, true);
+    int fieldNumber = getFieldNumber(x, y);
+    FieldState state = (FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
+    if (state != emptyField) {
+        return false;
+    }
+    bool isHit = model.data(model.index(fieldNumber), ShipAtPositionRole).toBool();
+    if (isHit) {
+        model.setData(model.index(y, x), QVariant(), ModifyShipHealthRole);
+        model.setData(model.index(fieldNumber), QVariant(hiddenShip), ModifyFieldStateRole);
+    } else {
+        model.setData(model.index(fieldNumber), QVariant(hiddenField), ModifyFieldStateRole);
+    }
 
     return isHit;
 }
@@ -64,19 +75,19 @@ bool Board::shoot(const quint8 x, const quint8 y)
  */
 void Board::print()
 {
-    QString horzLine(boardRect.width()*4+1, '-');
+    QString horzLine(model.columns()*4+1, '-');
     horzLine.prepend("  ").append("\n");
 
     printf("  ");
-    for (quint8 x=0; x<boardRect.width(); ++x) {
+    for (quint8 x=0; x<model.columns(); ++x) {
         printf("  %i ", x);
     }
     printf("\n");
     QString field;
-    for (quint8 y=0; y<boardRect.height(); ++y) {
+    for (quint8 y=0; y<model.rows(); ++y) {
         printf(horzLine.toUtf8().data());
         printf("%i ", y);
-        for (quint8 x=0; x<boardRect.width(); ++x) {
+        for (quint8 x=0; x<model.columns(); ++x) {
             QPoint pt(x, y);
             field = getFieldState(pt);
             printf("|%s", field.toUtf8().data());
@@ -92,13 +103,7 @@ void Board::print()
  */
 bool Board::hasUndestroyedShip()
 {
-    for (Ship ship : shipList) {
-        if (! ship.isDestroyed()) {
-            return true;
-        }
-    }
-
-    return false;
+    return model.data(model.index(0), HasUndestroiedShipRole).toBool();
 }
 
 /**
@@ -108,38 +113,37 @@ bool Board::hasUndestroyedShip()
  */
 QString Board::getFieldState(const QPoint &point) const
 {
-    bool defaultValue = false;
     int fieldNumber = getFieldNumber(point);
-    bool isFieldHidden = shotMap.value(fieldNumber, defaultValue);
-    for (Ship ship : shipList) {
-        if (ship.isOnShip(point) && isFieldHidden) {
-            return hiddenShip;
-        }
-    }
-    if (isFieldHidden) {
-        return hiddenField;
+    FieldState state = (FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
+    switch (state) {
+    case emptyField:
+        return emptyFieldString;
+        break;
+    case hiddenField:
+        return hiddenFieldString;
+        break;
+    case hiddenShip:
+        return hiddenShipString;
+        break;
+    default:
+        break;
     }
 
-    return emptyField;
+    return QString();
 }
 
 /**
- * Mark a ship hidden if shot was a hit.
- * @param shotPosition
+ * Get a point object from a field number.
+ * The field number is counted in a grid from left to rigth
+ * and in this manner from top to the buttom row.
+ * @param fieldNumber       Field number counted from top-left corner.
+ * @return                  A point object.
  */
-bool Board::shotMayHitShip(QPoint shotPosition)
+QPoint Board::getPointObject(const int fieldNumber) const
 {
-    bool defaultValue = false;
-    int fieldNumber = getFieldNumber(shotPosition);
-    bool wasHiddenBefore = shotMap.value(fieldNumber, defaultValue);
-    if (! wasHiddenBefore) {
-        for (Ship &ship : shipList) {
-            if (ship.isOnShip(shotPosition)) {
-                ship.addHit();
-                return true;
-            }
-        }
-    }
+    QPoint point;
+    point.setX(fieldNumber % model.columns());
+    point.setY(fieldNumber / model.columns());
 
-    return false;
+    return point;
 }

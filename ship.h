@@ -17,22 +17,23 @@ class Ship
 {
 public:
     Ship(const quint8 length);
-    Ship(const quint8 length, const QRect position);
+    Ship(const quint8 length, const QRect m_position);
 
 protected:
     quint8 hits;
-    quint8 length;
-    QRect position;
+    quint8 m_length;
+    QRect m_position;
 
 public:
-    bool isOnShip(QPoint pt)            { return position.contains(pt); }
-    quint8 getLength() const            { return length; }
-    QRect getPosition() const           { return position; }
-    bool isDestroyed() const            { return hits >= length; }
+    bool isOnShip(const QPoint &pt) const               { return m_position.contains(pt); }
+    bool isOnShip(const int x, const int y) const       { return m_position.contains(x, y); }
+    quint8 length() const                               { return m_length; }
+    QRect position() const                              { return m_position; }
+    bool isDestroyed() const                            { return hits >= m_length; }
     void addHit();
 
     // Static members
-    static QRect getShipPositionRect(const QPoint point, const quint8 length, const Direction direction);
+    static QRect getShipPositionRect(const QPoint point, const quint8 m_length, const Direction direction);
 
 };
 

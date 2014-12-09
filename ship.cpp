@@ -1,13 +1,16 @@
 #include "ship.h"
 
+
 /**
  * Constructor
  * Constructs a battleship.
  * @param length        The size (length) of the battleship.
  */
+
 Ship::Ship(const quint8 length) :
-    length(length),
-    hits(0)
+    m_length(length),
+    hits(0),
+    m_position(0,0,0,0)
 {
 }
 
@@ -18,8 +21,8 @@ Ship::Ship(const quint8 length) :
  * @param position      The position on the map.
  */
 Ship::Ship(const quint8 length, const QRect position) :
-    length(length),
-    position(position),
+    m_length(length),
+    m_position(position),
     hits(0)
 {
 

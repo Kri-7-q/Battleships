@@ -16,14 +16,16 @@ SOURCES += main.cpp \
     battleships.cpp \
     board.cpp \
     ship.cpp \
-    consoleinterface.cpp
+    consoleinterface.cpp \
+    gameboardmodel.cpp
 
 HEADERS += \
     battleships.h \
     board.h \
     ship.h \
     consoleinterface.h \
-    Utilities.h
+    Utilities.h \
+    gameboardmodel.h
 
 OTHER_FILES +=
 

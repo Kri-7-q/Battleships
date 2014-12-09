@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     if (argc < 2 && QString(argv[1]) != "-c") {
         QApplication app(argc, argv);
 
-        //qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
+        qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
 
         QQmlApplicationEngine engine;
         engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         if (useCustomShips) {
             shipSizeList = interface.getCustomShips();
         } else {
-            shipSizeList = battleships.getDefaultShips();
+            shipSizeList = battleships.defaultShips();
         }
         // Place ships
         QList<QString> shipNameList = shipSizeList.keys();
@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
             // Are there undestroyed ships left ?
             if (! gameBoard.hasUndestroyedShip()) {
                 running = false;
-                QString text = battleships.getPlayerName() + " you have destroyed all ships.";
+                QString text = battleships.playerName() + " you have destroyed all ships.";
                 interface.printText(text);
-                text = QString("You have taken %1 shots.").arg(battleships.getShotsFired());
+                text = QString("You have taken %1 shots.").arg(battleships.shotsFired());
                 interface.printText(text);
             }
         }

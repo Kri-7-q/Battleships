@@ -4,26 +4,27 @@
  * Construtor
  * Constructs a Battleship object.
  */
-Battleships::Battleships() :
-    shotsFired(0)
+Battleships::Battleships(QObject *parent) :
+    QObject(parent),
+    m_shotsFired(0)
 {
-    defaultShips.insert("Aircraft carrier", 5);
-    defaultShips.insert("Battleship", 4);
-    defaultShips.insert("Submarine", 3);
-    defaultShips.insert("Cruiser", 3);
-    defaultShips.insert("Destroyer", 2);
+    m_defaultShips.insert("Aircraft carrier", 5);
+    m_defaultShips.insert("Battleship", 4);
+    m_defaultShips.insert("Submarine", 3);
+    m_defaultShips.insert("Cruiser", 3);
+    m_defaultShips.insert("Destroyer", 2);
 }
 
 // Getter
-QString Battleships::getPlayerName() const
+QString Battleships::playerName() const
 {
-    return playerName;
+    return m_playerName;
 }
 
 // Setter
 void Battleships::setPlayerName(const QString name)
 {
-    playerName = name;
+    m_playerName = name;
 }
 
 /**

@@ -14,27 +14,29 @@
 #include <QHash>
 #include <QSize>
 #include <QPoint>
+#include <QObject>
 #include "Utilities.h"
 
 
-class Battleships
+class Battleships : public QObject
 {
+    Q_OBJECT
 public:
-    Battleships();
+    explicit Battleships(QObject *parent = 0);
 
-    QString getPlayerName() const;
-    quint16 getShotsFired()                     { return shotsFired; }
+    QString playerName() const;
+    quint16 shotsFired()                     { return m_shotsFired; }
     void setPlayerName(const QString name);
-    QHash<QString,int> getDefaultShips()        { return defaultShips; }
+    QHash<QString,int> defaultShips()        { return m_defaultShips; }
     ShipPosition getShipPosition(const QString input);
     ShipPosition getRandomShipPosition(const QSize boardSize);
-    void addShoot()                             { ++shotsFired; }
+    void addShoot()                             { ++m_shotsFired; }
     QPoint getPointObject(const QString input);
 
-protected:
-    QString playerName;
-    quint16 shotsFired;
-    QHash<QString, int> defaultShips;
+private:
+    QString m_playerName;
+    quint16 m_shotsFired;
+    QHash<QString, int> m_defaultShips;
 
     // Methods
     Direction getRandomDirection();
