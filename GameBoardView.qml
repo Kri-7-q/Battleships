@@ -47,23 +47,10 @@ Column {
             Repeater {
                 model: gameBoardModel
                 // Delegate to draw
-                Rectangle {
-                    id: boardDelegate
+                GameBoardDelegate {
                     width: boardFrame.cellSide
                     height: boardFrame.cellSide
-                    color: "transparent"
-                    border.color: "black"
-                    border.width: 1
-
-                    MouseArea {
-                        id: cellMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: enabled
-                        onEntered: { parent.color = "gray"; parent.opacity = 0.3 }
-                        onExited: { parent.color = "transparent"; parent.opacity = 1 }
-                        preventStealing: true
-                    } // END mouse area
-                } // END delegate rectangle
+                }
             } // END repeater
         } // END grid
     } // END board frame

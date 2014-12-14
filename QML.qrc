@@ -3,5 +3,6 @@
         <file>GameGUI.qml</file>
         <file>SettingsDialog.qml</file>
         <file>GameBoardView.qml</file>
+        <file>GameBoardDelegate.qml</file>
     </qresource>
 </RCC>
