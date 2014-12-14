@@ -15,6 +15,7 @@
 #include <QSize>
 #include <QPoint>
 #include <QObject>
+#include <QTime>
 #include "Utilities.h"
 
 
@@ -37,9 +38,6 @@ private:
     QString m_playerName;
     quint16 m_shotsFired;
     QHash<QString, int> m_defaultShips;
-
-    // Methods
-    Direction getRandomDirection();
 };
 
 #endif // BATTLESHIPS_H

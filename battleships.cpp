@@ -75,41 +75,13 @@ ShipPosition Battleships::getShipPosition(const QString input)
  */
 ShipPosition Battleships::getRandomShipPosition(const QSize boardSize)
 {
+    qsrand(QTime::currentTime().msec());
     int x = qrand() % boardSize.width();
     int y = qrand() % boardSize.height();
-    Direction dir = getRandomDirection();
+    Direction dir = (Direction)(qrand() % 4);
     ShipPosition position = { x, y, dir };
 
     return position;
-}
-
-/**
- * Get a random direction value.
- * @return      The ships direction;
- */
-Direction Battleships::getRandomDirection()
-{
-    Direction dir;
-    int random = qrand() % 4;
-    switch (random) {
-    case 0:
-        dir = Right;
-        break;
-    case 1:
-        dir = Left;
-        break;
-    case 2:
-        dir = Up;
-        break;
-    case 3:
-        dir = Down;
-        break;
-    default:
-        dir = Right;
-        break;
-    }
-
-    return dir;
 }
 
 /**

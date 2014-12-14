@@ -8,8 +8,8 @@ enum Direction { Right, Left, Up, Down };
 enum FieldState { emptyField, hiddenField, hiddenShip };
 
 struct ShipPosition {
-    quint8 x;
-    quint8 y;
+    int x;
+    int y;
     Direction direction;
 };
 

@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     // If game was started with option -c it will launch in console.
-    if (argc < 2 && QString(argv[1]) != "-c") {
+    if (true /*argc < 2 && QString(argv[1]) != "-c"*/) {
         QApplication app(argc, argv);
 
         qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
