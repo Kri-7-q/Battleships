@@ -6,7 +6,8 @@
  */
 GameBoardModel::GameBoardModel(QObject *parent) :
     QAbstractListModel(parent),
-    m_boardRect(0,0,0,0)
+    m_boardRect(0,0,0,0),
+    m_ptempShip(0)
 {
 }
 
@@ -74,6 +75,9 @@ int GameBoardModel::rowCount(const QModelIndex &parent) const
  * Search for a Ship object at the given position.
  * Position should be given in the index value.
  * Returns true if a ship is at this position.
+ * ...
+ * ............................................
+ * ...
  * @param index     The field of game board.
  * @param role
  * @return          The content depends on the request (role).
@@ -102,6 +106,19 @@ QVariant GameBoardModel::data(const QModelIndex &index, int role) const
             }
         }
         break;
+    case PlaceShipsRole: {
+        QPoint point(index.row() % m_boardRect.width(), index.row() / m_boardRect.width());
+        for (const Ship ship : m_shipList) {
+            if (ship.isOnShip(point)) {
+                return QVariant(placedShip);
+            }
+        }
+        if (m_ptempShip != 0 && m_ptempShip->isOnShip(point)) {
+            return QVariant(tempShip);
+        }
+        return QVariant(emptyField);
+        break;
+    }
     default:
         break;
     }
@@ -142,4 +159,17 @@ bool GameBoardModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     return true;
+}
+
+/**
+ * Export model roles to QML.
+ * @return roles        A QHash object containig some model role for QML.
+ */
+QHash<int, QByteArray> GameBoardModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::DisplayRole] = "display";
+    roles[PlaceShipsRole] = "place";
+
+    return roles;
 }

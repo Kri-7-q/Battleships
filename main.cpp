@@ -12,9 +12,12 @@ int main(int argc, char *argv[])
     if (true /*argc < 2 && QString(argv[1]) != "-c"*/) {
         QApplication app(argc, argv);
 
-        qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
+        Board gameBoard(10,10);
 
+        qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
         QQmlApplicationEngine engine;
+        engine.rootContext()->setContextProperty("gameBoardModel", gameBoard.getModel());
+
         engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));
 
         return app.exec();

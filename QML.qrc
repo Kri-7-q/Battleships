@@ -3,6 +3,11 @@
         <file>GameGUI.qml</file>
         <file>SettingsDialog.qml</file>
         <file>GameBoardView.qml</file>
-        <file>GameBoardDelegate.qml</file>
+        <file>PlaceShipDelegate.qml</file>
+        <file>resources/Ship.png</file>
+        <file>resources/water_512.jpg</file>
+        <file>resources/placedShip.png</file>
+        <file>resources/tempShip.png</file>
+        <file>resources/DirectionPointer.png</file>
     </qresource>
 </RCC>

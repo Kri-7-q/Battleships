@@ -36,7 +36,7 @@ void Battleships::setPlayerName(const QString name)
  */
 ShipPosition Battleships::getShipPosition(const QString input)
 {
-    ShipPosition position = {-1, -1, Up};
+    ShipPosition position = {-1, -1, Ship::Up};
     QStringList value = input.split(',');
     if (value.size() < 3) {
         return position;
@@ -49,19 +49,19 @@ ShipPosition Battleships::getShipPosition(const QString input)
     char *direction = value[2].toUtf8().data();
     switch (direction[0]) {
     case 'l':
-        position.direction = Left;
+        position.direction = Ship::Left;
         break;
     case 'r':
-        position.direction = Right;
+        position.direction = Ship::Right;
         break;
     case 'u':
-        position.direction = Up;
+        position.direction = Ship::Up;
         break;
     case 'd':
-        position.direction = Down;
+        position.direction = Ship::Down;
         break;
     default:
-        position.direction = Down;
+        position.direction = Ship::Down;
         break;
     }
 
@@ -78,7 +78,7 @@ ShipPosition Battleships::getRandomShipPosition(const QSize boardSize)
     qsrand(QTime::currentTime().msec());
     int x = qrand() % boardSize.width();
     int y = qrand() % boardSize.height();
-    Direction dir = (Direction)(qrand() % 4);
+    Ship::Direction dir = (Ship::Direction)(qrand() % 4);
     ShipPosition position = { x, y, dir };
 
     return position;

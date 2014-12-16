@@ -5,7 +5,6 @@
 #include <QRect>
 #include <QList>
 #include "ship.h"
-#include "Utilities.h"
 
 
 class GameBoardModel : public QAbstractListModel
@@ -16,10 +15,19 @@ class GameBoardModel : public QAbstractListModel
 public:
     explicit GameBoardModel(QObject *parent = 0);
 
+    enum UserRoles { ShipAtPositionRole = Qt::UserRole + 1,
+                     HasUndestroiedShipRole,
+                     ModifyFieldStateRole,
+                     ModifyShipHealthRole,
+                     PlaceShipsRole };
+    enum FieldState { emptyField, hiddenField, hiddenShip, placedShip, tempShip };
+    Q_ENUMS(FieldState)
+
 private:
     QRect m_boardRect;
     QList<Ship> m_shipList;
     QHash<int, FieldState> m_fieldStateList;
+    Ship *m_ptempShip;
 
 signals:
     void columnsChanged();
@@ -39,6 +47,7 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
+    QHash<int, QByteArray> roleNames() const;
 };
 
 #endif // GAMEBOARDMODEL_H

@@ -12,6 +12,7 @@
 #include <QSize>
 #include <QHash>
 #include "board.h"
+#include "Utilities.h"
 
 class ConsoleInterface
 {

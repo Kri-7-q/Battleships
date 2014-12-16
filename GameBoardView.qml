@@ -27,13 +27,12 @@ Column {
     Image {
         id: boardFrame
         property int headerHeight: 30
-        property int cellApproximateX: (view.availableWidth - 20) / gameBoardModel.columns
+        property int cellApproximateX: view.availableWidth / gameBoardModel.columns
         property int cellApproximateY: (view.availableHeight - headerHeight) / gameBoardModel.rows
         property int cellSide: cellApproximateX > cellApproximateY ? cellApproximateY : cellApproximateX
-        property int spacing: -1
-        width: (cellSide + spacing) * gameBoardModel.columns - spacing
-        height: (cellSide + spacing) * gameBoardModel.rows - spacing
-        source: "file:/Users/Christian/Pictures/seichtesgewaesser_512.jpg"
+        width: (cellSide + board.spacing) * gameBoardModel.columns - spacing
+        height: (cellSide + board.spacing) * gameBoardModel.rows - spacing
+        source: "qrc:resources/water_512.jpg"
 
         // Game board grid
         Grid {
@@ -41,13 +40,14 @@ Column {
             anchors.fill: boardFrame
             columns: gameBoardModel.columns
             rows: gameBoardModel.rows
-            spacing: boardFrame.spacing
+            spacing: -1
+            property int pointerAngel: 0
 
             // Draw the fields
             Repeater {
                 model: gameBoardModel
                 // Delegate to draw
-                GameBoardDelegate {
+                PlaceShipDelegate {
                     width: boardFrame.cellSide
                     height: boardFrame.cellSide
                 }

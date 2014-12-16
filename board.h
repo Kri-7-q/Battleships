@@ -30,12 +30,13 @@ protected:
 
 public:
     // Methods
-    bool place(const Ship ship, const quint8 x, const quint8 y, const Direction d);
+    bool place(const Ship ship, const quint8 x, const quint8 y, const Ship::Direction d);
     bool shoot(const quint8 x, const quint8 y);
     void print();
     QSize getGameBoardSize()                    { return model.gameBoardRect().size(); }
     bool hasUndestroyedShip();
     bool isWithinGameBoard(const QPoint &pt)         { return model.gameBoardRect().contains(pt); }
+    GameBoardModel* getModel()                       { return &model; }
 
 private:
     QString getFieldState(const QPoint &point) const;

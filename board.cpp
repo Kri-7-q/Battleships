@@ -33,7 +33,7 @@ Board::Board(const quint8 width, const quint8 height) :
  * @param d             The direction in which the ship is to place.
  * @return              True if ship was set to its position.
  */
-bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Direction d)
+bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Ship::Direction d)
 {
     QRect shipRect = Ship::getShipPositionRect(QPoint(x, y), ship.length(), d);
     if (! model.gameBoardRect().contains(shipRect)) {
@@ -55,16 +55,16 @@ bool Board::place(const Ship ship, const quint8 x, const quint8 y, const Directi
 bool Board::shoot(const quint8 x, const quint8 y)
 {
     int fieldNumber = getFieldNumber(x, y);
-    FieldState state = (FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
-    if (state != emptyField) {
+    GameBoardModel::FieldState state = (GameBoardModel::FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
+    if (state != GameBoardModel::emptyField) {
         return false;
     }
-    bool isHit = model.data(model.index(fieldNumber), ShipAtPositionRole).toBool();
+    bool isHit = model.data(model.index(fieldNumber), GameBoardModel::ShipAtPositionRole).toBool();
     if (isHit) {
-        model.setData(model.index(y, x), QVariant(), ModifyShipHealthRole);
-        model.setData(model.index(fieldNumber), QVariant(hiddenShip), ModifyFieldStateRole);
+        model.setData(model.index(y, x), QVariant(), GameBoardModel::ModifyShipHealthRole);
+        model.setData(model.index(fieldNumber), QVariant(GameBoardModel::hiddenShip), GameBoardModel::ModifyFieldStateRole);
     } else {
-        model.setData(model.index(fieldNumber), QVariant(hiddenField), ModifyFieldStateRole);
+        model.setData(model.index(fieldNumber), QVariant(GameBoardModel::hiddenField), GameBoardModel::ModifyFieldStateRole);
     }
 
     return isHit;
@@ -103,7 +103,7 @@ void Board::print()
  */
 bool Board::hasUndestroyedShip()
 {
-    return model.data(model.index(0), HasUndestroiedShipRole).toBool();
+    return model.data(model.index(0), GameBoardModel::HasUndestroiedShipRole).toBool();
 }
 
 /**
@@ -114,15 +114,15 @@ bool Board::hasUndestroyedShip()
 QString Board::getFieldState(const QPoint &point) const
 {
     int fieldNumber = getFieldNumber(point);
-    FieldState state = (FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
+    GameBoardModel::FieldState state = (GameBoardModel::FieldState)model.data(model.index(fieldNumber), Qt::DisplayRole).toInt();
     switch (state) {
-    case emptyField:
+    case GameBoardModel::emptyField:
         return emptyFieldString;
         break;
-    case hiddenField:
+    case GameBoardModel::hiddenField:
         return hiddenFieldString;
         break;
-    case hiddenShip:
+    case GameBoardModel::hiddenShip:
         return hiddenShipString;
         break;
     default:

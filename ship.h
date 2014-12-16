@@ -11,13 +11,14 @@
 #define SHIP_H
 #include <QString>
 #include <QRect>
-#include "Utilities.h"
 
 class Ship
 {
 public:
     Ship(const quint8 length);
     Ship(const quint8 length, const QRect m_position);
+
+    enum Direction { Right, Left, Up, Down };
 
 protected:
     quint8 hits;
