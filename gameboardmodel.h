@@ -27,7 +27,6 @@ private:
     QRect m_boardRect;
     QList<Ship> m_shipList;
     QHash<int, FieldState> m_fieldStateList;
-    Ship *m_ptempShip;
 
 signals:
     void columnsChanged();
@@ -40,7 +39,6 @@ public:
     int rows() const                { return m_boardRect.height(); }
     void setColumns(const int columns);
     void setRows(const int height);
-    bool placeShip(const Ship &newShip);
     QRect gameBoardRect() const           { return m_boardRect; }
 
     // QAbstractItemModel interface
@@ -48,6 +46,9 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     QHash<int, QByteArray> roleNames() const;
+
+protected:
+    bool placeShipToGameBoard(const Ship &newShip, int topLeft, int bottomRight);
 };
 
 #endif // GAMEBOARDMODEL_H

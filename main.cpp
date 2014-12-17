@@ -11,13 +11,9 @@ int main(int argc, char *argv[])
     // If game was started with option -c it will launch in console.
     if (true /*argc < 2 && QString(argv[1]) != "-c"*/) {
         QApplication app(argc, argv);
-
-        Board gameBoard(10,10);
-
-        qmlRegisterType<GameBoardModel>("Models", 1, 0, "GameBoardModel");
+        qmlRegisterType<Board>("Models", 1, 0, "GameBoardModel");
+        qmlRegisterType<Battleships>("Controler", 1, 0, "Controler");
         QQmlApplicationEngine engine;
-        engine.rootContext()->setContextProperty("gameBoardModel", gameBoard.getModel());
-
         engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));
 
         return app.exec();

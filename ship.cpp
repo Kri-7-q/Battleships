@@ -7,10 +7,11 @@
  * @param length        The size (length) of the battleship.
  */
 
-Ship::Ship(const quint8 length) :
+Ship::Ship(const quint8 length, QString name) :
     m_length(length),
     hits(0),
-    m_position(0,0,0,0)
+    m_position(0,0,0,0),
+    m_name(name)
 {
 }
 
@@ -20,10 +21,11 @@ Ship::Ship(const quint8 length) :
  * @param length        The ships size (lenght).
  * @param position      The position on the map.
  */
-Ship::Ship(const quint8 length, const QRect position) :
+Ship::Ship(const quint8 length, const QRect position, QString name) :
     m_length(length),
     m_position(position),
-    hits(0)
+    hits(0),
+    m_name(name)
 {
 
 }
@@ -44,26 +46,54 @@ void Ship::addHit()
  * @param direction         The direction in which the ship is laid.
  * @return rect             A QRect with the ships position in the map.
  */
-QRect Ship::getShipPositionRect(const QPoint point, const quint8 length, const Direction direction)
+QRect Ship::getShipPositionRect(const int x, const int y, const quint8 length, const Direction direction)
 {
     const int l = length - 1;
     QRect rect;
     switch (direction) {
     case Up:
-        rect.setCoords(point.x(), point.y()-l, point.x(), point.y());
+        rect.setCoords(x, y-l, x, y);
         break;
     case Down:
-        rect.setCoords(point.x(), point.y(), point.x(), point.y()+l);
+        rect.setCoords(x, y, x, y+l);
         break;
     case Left:
-        rect.setCoords(point.x()-l, point.y(), point.x(), point.y());
+        rect.setCoords(x-l, y, x, y);
         break;
     case Right:
-        rect.setCoords(point.x(), point.y(), point.x()+l, point.y());
+        rect.setCoords(x, y, x+l, y);
         break;
     default:
         break;
     }
 
     return rect;
+}
+
+/**
+ * Get a direction from an angel value.
+ * @param angel
+ * @return          A Direction value.
+ */
+Ship::Direction Ship::getDirectionFromAngel(int angel)
+{
+    switch (angel) {
+    case 0:
+        return Up;
+        break;
+    case 90:
+        return Right;
+        break;
+    case 180:
+        return Down;
+        break;
+    case 270:
+        return Left;
+        break;
+    default:
+        return Up;
+        break;
+    }
+
+    return Up;
 }

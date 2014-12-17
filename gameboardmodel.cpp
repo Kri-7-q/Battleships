@@ -6,8 +6,7 @@
  */
 GameBoardModel::GameBoardModel(QObject *parent) :
     QAbstractListModel(parent),
-    m_boardRect(0,0,0,0),
-    m_ptempShip(0)
+    m_boardRect(0,0,0,0)
 {
 }
 
@@ -43,7 +42,7 @@ void GameBoardModel::setRows(const int height)
  * @param newShip
  * @return              True if ship was placed.
  */
-bool GameBoardModel::placeShip(const Ship &newShip)
+bool GameBoardModel::placeShipToGameBoard(const Ship &newShip, int topLeft, int bottomRight)
 {
     for (Ship ship : m_shipList) {
         if (ship.position().intersects(newShip.position())) {
@@ -51,6 +50,7 @@ bool GameBoardModel::placeShip(const Ship &newShip)
         }
     }
     m_shipList.append(newShip);
+    emit dataChanged(index(topLeft), index(bottomRight));
 
     return true;
 }
@@ -110,13 +110,10 @@ QVariant GameBoardModel::data(const QModelIndex &index, int role) const
         QPoint point(index.row() % m_boardRect.width(), index.row() / m_boardRect.width());
         for (const Ship ship : m_shipList) {
             if (ship.isOnShip(point)) {
-                return QVariant(placedShip);
+                return QVariant(true);
             }
         }
-        if (m_ptempShip != 0 && m_ptempShip->isOnShip(point)) {
-            return QVariant(tempShip);
-        }
-        return QVariant(emptyField);
+        value = QVariant(false);
         break;
     }
     default:
@@ -144,6 +141,7 @@ bool GameBoardModel::setData(const QModelIndex &index, const QVariant &value, in
     case ModifyFieldStateRole: {
         FieldState state = (FieldState)value.toInt();
         m_fieldStateList.insert(index.row(), state);
+        emit dataChanged(index, index);
         break;
     }
     case ModifyShipHealthRole:
@@ -169,7 +167,7 @@ QHash<int, QByteArray> GameBoardModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
-    roles[PlaceShipsRole] = "place";
+    roles[PlaceShipsRole] = "placeShips";
 
     return roles;
 }

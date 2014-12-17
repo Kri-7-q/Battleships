@@ -45,6 +45,7 @@ Column {
 
             // Draw the fields
             Repeater {
+                id: repeater
                 model: gameBoardModel
                 // Delegate to draw
                 PlaceShipDelegate {

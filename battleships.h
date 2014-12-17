@@ -22,6 +22,8 @@
 class Battleships : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
+
 public:
     explicit Battleships(QObject *parent = 0);
 
@@ -33,6 +35,11 @@ public:
     ShipPosition getRandomShipPosition(const QSize boardSize);
     void addShoot()                             { ++m_shotsFired; }
     QPoint getPointObject(const QString input);
+
+signals:
+    void playerNameChanged();
+
+public slots:
 
 private:
     QString m_playerName;

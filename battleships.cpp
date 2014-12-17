@@ -24,7 +24,10 @@ QString Battleships::playerName() const
 // Setter
 void Battleships::setPlayerName(const QString name)
 {
-    m_playerName = name;
+    if (m_playerName != name) {
+        m_playerName = name;
+        emit playerNameChanged();
+    }
 }
 
 /**
