@@ -7,7 +7,6 @@ Rectangle {
     color: "transparent"
     border.width: 1
     border.color: "black"
-    property int angel: 0
 
     // Draw Image with field content.
     Image {
@@ -28,36 +27,49 @@ Rectangle {
     }
 
     MouseArea {
-        id: cellMouseArea
+        id: delegateMouseArea
+        enabled: placeShipsView.delegateMouseAreaEnabled
         anchors.fill: boardDelegate
         hoverEnabled: enabled
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: {
-            shipPointer.rotation = board.pointerAngel
+            shipPointer.rotation = placeShipsView.delegateAngel
             shipPointer.visible = true
         }
         onExited: {
             shipPointer.visible = false
         }
         onClicked: {
+            // Right mouse button pressed to rotate ship.
             if (mouse.button == Qt.RightButton) {
-                board.pointerAngel += 90
-                if (board.pointerAngel >= 360)     board.pointerAngel = 0
-                shipPointer.rotation = board.pointerAngel
+                placeShipsView.delegateAngel += 90
+                if (placeShipsView.delegateAngel >= 360)     placeShipsView.delegateAngel = 0
+                shipPointer.rotation = placeShipsView.delegateAngel
             }
+            // Left mouse Button pressed. Place ship or end dialog.
             if (mouse.button == Qt.LeftButton) {
                 var length = shipModel.get(shipModel.index).length
                 var name = shipModel.get(shipModel.index).name
-                if(gameBoardModel.placeShip(length, name, index, board.pointerAngel)) {
-                    if (shipModel.count > shipModel.index) {
+                if(gameBoardModel.placeShip(length, name, index, placeShipsView.delegateAngel)) {
+                    if (shipModel.count > shipModel.index + 1) {
                         shipModel.index += 1
-                    }
-                    if (shipModel.index == shipModel.count-1) {
-                        startButton.visible = true
-                    }
-                }
-            }
-        }
+                    } else {
+                        boardDelegate.state = "endPlaceShipsDialog"
+                    } // END else
+                } // END if
+            }// END if (left mouse button)
+        }// END onClicked
     } // END mouse area
+    states: [
+        State {
+            name: "endPlaceShipsDialog"
+            PropertyChanges { target: startButton; visible: true; }
+            PropertyChanges { target: shipName; text: qsTr("No more ships available."); }
+            PropertyChanges { target: shipImage; visible: false; }
+            PropertyChanges { target: shipPointer; visible: false; }
+            PropertyChanges { target: placeShipsView; delegateMouseAreaEnabled: false }
+        }
+
+    ]
 } // END delegate rectangle
 

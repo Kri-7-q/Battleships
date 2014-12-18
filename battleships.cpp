@@ -6,7 +6,8 @@
  */
 Battleships::Battleships(QObject *parent) :
     QObject(parent),
-    m_shotsFired(0)
+    m_shotsFired(0),
+    m_playerMode(SinglePlayer)
 {
     m_defaultShips.insert("Aircraft carrier", 5);
     m_defaultShips.insert("Battleship", 4);

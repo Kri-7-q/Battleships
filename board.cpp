@@ -136,22 +136,6 @@ QString Board::getFieldState(const QPoint &point) const
 }
 
 /**
- * Get a point object from a field number.
- * The field number is counted in a grid from left to rigth
- * and in this manner from top to the buttom row.
- * @param fieldNumber       Field number counted from top-left corner.
- * @return                  A point object.
- */
-QPoint Board::getPointObject(const int fieldNumber) const
-{
-    QPoint point;
-    point.setX(fieldNumber % columns());
-    point.setY(fieldNumber / columns());
-
-    return point;
-}
-
-/**
  * SLOT
  * Places a ship on the game board if posible with the given values.
  * @param length        The ships length (size).
@@ -160,10 +144,23 @@ QPoint Board::getPointObject(const int fieldNumber) const
  * @param angel         An angel value where north is 0 and Right 90 ...
  * @return              True if ship was succesfully placed on the board.
  */
-bool Board::placeShip(int length, QString name, int index, int angel)
+bool Board::placeShip(const int length, const QString name, const int index, const int angel)
 {
     QPoint position = getPointObject(index);
     Ship::Direction direction = Ship::getDirectionFromAngel(angel);
 
     return place(Ship(length, name), position.x(), position.y(), direction);
+}
+
+/**
+ * SLOT
+ * Takes a shoot from GUI.
+ * @param index         The index of game board field.
+ * @return              True if a ship was hidden.
+ */
+bool Board::shootAt(const int index)
+{
+    QPoint point = getPointObject(index);
+
+    return shoot(point.x(), point.y());
 }

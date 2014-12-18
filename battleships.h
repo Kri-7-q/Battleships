@@ -22,10 +22,13 @@
 class Battleships : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(PlayerMode)
     Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
 
 public:
     explicit Battleships(QObject *parent = 0);
+
+    enum PlayerMode { SinglePlayer, MultiPlayer };
 
     QString playerName() const;
     quint16 shotsFired()                     { return m_shotsFired; }
@@ -38,6 +41,7 @@ public:
 
 signals:
     void playerNameChanged();
+    bool shootAt(const int index);
 
 public slots:
 
@@ -45,6 +49,7 @@ private:
     QString m_playerName;
     quint16 m_shotsFired;
     QHash<QString, int> m_defaultShips;
+    PlayerMode m_playerMode;
 };
 
 #endif // BATTLESHIPS_H

@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import Models 1.0
 
 // Game board with player name name as title.
 Column {
@@ -8,6 +9,10 @@ Column {
     property alias name: headerTitle.text
     readonly property alias cellSide: boardFrame.cellSide
     readonly property alias boardRect: boardFrame
+    property Component delegate: Rectangle { width: cellSide; height: cellSide; color: "transparent" }
+    property GameBoardModel model: GameBoardModel { columns: 5; rows: 5 }
+    property int delegateAngel: 0
+    property bool delgateMouseAreaEnabled: true
 
     // Game board header (player name)
     Rectangle {
@@ -19,6 +24,7 @@ Column {
         Text {
             id: headerTitle
             font.bold: true
+            font.pixelSize: 22 * window.scale
             anchors.centerIn: parent
         }
     }
@@ -26,32 +32,28 @@ Column {
     // Black background as a frame (to get grid lines)
     Image {
         id: boardFrame
-        property int headerHeight: 30
-        property int cellApproximateX: view.availableWidth / gameBoardModel.columns
-        property int cellApproximateY: (view.availableHeight - headerHeight) / gameBoardModel.rows
+        property int headerHeight: 30 * window.scale
+        property int cellApproximateX: view.availableWidth / model.columns
+        property int cellApproximateY: (view.availableHeight - headerHeight) / model.rows
         property int cellSide: cellApproximateX > cellApproximateY ? cellApproximateY : cellApproximateX
-        width: (cellSide + board.spacing) * gameBoardModel.columns - spacing
-        height: (cellSide + board.spacing) * gameBoardModel.rows - spacing
+        width: (cellSide + boardGrid.spacing) * model.columns - spacing
+        height: (cellSide + boardGrid.spacing) * model.rows - spacing
         source: "qrc:resources/water_512.jpg"
 
         // Game board grid
         Grid {
-            id: board
+            id: boardGrid
             anchors.fill: boardFrame
-            columns: gameBoardModel.columns
-            rows: gameBoardModel.rows
+            columns: view.model.columns
+            rows: view.model.rows
             spacing: -1
-            property int pointerAngel: 0
 
             // Draw the fields
             Repeater {
                 id: repeater
-                model: gameBoardModel
+                model: view.model
                 // Delegate to draw
-                PlaceShipDelegate {
-                    width: boardFrame.cellSide
-                    height: boardFrame.cellSide
-                }
+                delegate: view.delegate
             } // END repeater
         } // END grid
     } // END board frame

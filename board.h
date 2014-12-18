@@ -41,12 +41,12 @@ private:
     QString getFieldState(const QPoint &point) const;
     int getFieldNumber(const QPoint &point) const               { return point.y() * columns() + point.x(); }
     int getFieldNumber(const quint8 x, const quint8 y) const    { return y * columns() + x; }
-    QPoint getPointObject(const int fieldNumber) const;
 
 signals:
 
 public slots:
-    bool placeShip(int length, QString name, int index, int angel);
+    bool placeShip(const int length, const QString name, const int index, const int angel);
+    bool shootAt(const int index);
 };
 
 #endif // BOARD_H

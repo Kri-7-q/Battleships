@@ -1,13 +1,20 @@
 <RCC>
     <qresource prefix="/">
         <file>GameGUI.qml</file>
-        <file>SettingsDialog.qml</file>
+        <file>PlayerNameDialog.qml</file>
         <file>GameBoardView.qml</file>
         <file>PlaceShipDelegate.qml</file>
         <file>resources/Ship.png</file>
         <file>resources/water_512.jpg</file>
         <file>resources/placedShip.png</file>
-        <file>resources/tempShip.png</file>
         <file>resources/DirectionPointer.png</file>
+        <file>CustomButton.qml</file>
+        <file>PlaceShipsDialog.qml</file>
+        <file>BoardSizeDialog.qml</file>
+        <file>OwnGameBoardDelegate.qml</file>
+        <file>resources/hiddenField.png</file>
+        <file>resources/hiddenShip.png</file>
+        <file>resources/emptyField.png</file>
+        <file>FoeGameBoardDelegate.qml</file>
     </qresource>
 </RCC>

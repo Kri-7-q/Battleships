@@ -89,6 +89,20 @@ QVariant GameBoardModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         value = QVariant(m_fieldStateList.value(index.row(), emptyField));
         break;
+    case DisplayAllRole: {
+        FieldState fieldState = m_fieldStateList.value(index.row(), emptyField);
+        if (fieldState != emptyField) {
+            return QVariant(fieldState);
+        }
+        QPoint point = getPointObject(index.row());
+        for (const Ship ship : m_shipList) {
+            if (ship.isOnShip(point)) {
+                return QVariant(placedShip);
+            }
+        }
+        value = QVariant(emptyField);
+        break;
+    }
     case ShipAtPositionRole:
         value = QVariant(false);
         for (const Ship ship : m_shipList) {
@@ -168,6 +182,23 @@ QHash<int, QByteArray> GameBoardModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
     roles[PlaceShipsRole] = "placeShips";
+    roles[DisplayAllRole] = "displayAll";
 
     return roles;
+}
+
+/**
+ * Get a point object from a field number.
+ * The field number is counted in a grid from left to rigth
+ * and in this manner from top to the buttom row.
+ * @param fieldNumber       Field number counted from top-left corner.
+ * @return                  A point object.
+ */
+QPoint GameBoardModel::getPointObject(const int fieldNumber) const
+{
+    QPoint point;
+    point.setX(fieldNumber % columns());
+    point.setY(fieldNumber / columns());
+
+    return point;
 }

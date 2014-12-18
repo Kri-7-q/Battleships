@@ -12,6 +12,8 @@ class GameBoardModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
+    Q_ENUMS(FieldState)
+
 public:
     explicit GameBoardModel(QObject *parent = 0);
 
@@ -19,9 +21,9 @@ public:
                      HasUndestroiedShipRole,
                      ModifyFieldStateRole,
                      ModifyShipHealthRole,
-                     PlaceShipsRole };
+                     PlaceShipsRole,
+                     DisplayAllRole };
     enum FieldState { emptyField, hiddenField, hiddenShip, placedShip, tempShip };
-    Q_ENUMS(FieldState)
 
 private:
     QRect m_boardRect;
@@ -40,6 +42,8 @@ public:
     void setColumns(const int columns);
     void setRows(const int height);
     QRect gameBoardRect() const           { return m_boardRect; }
+    FieldState fieldState() const;
+    void setFieldState(const FieldState state);
 
     // QAbstractItemModel interface
     int rowCount(const QModelIndex &parent) const;
@@ -49,6 +53,7 @@ public:
 
 protected:
     bool placeShipToGameBoard(const Ship &newShip, int topLeft, int bottomRight);
+    QPoint getPointObject(const int fieldNumber) const;
 };
 
 #endif // GAMEBOARDMODEL_H
