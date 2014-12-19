@@ -13,8 +13,10 @@
         <file>BoardSizeDialog.qml</file>
         <file>OwnGameBoardDelegate.qml</file>
         <file>resources/hiddenField.png</file>
-        <file>resources/hiddenShip.png</file>
         <file>resources/emptyField.png</file>
         <file>FoeGameBoardDelegate.qml</file>
+        <file>GamePlayDialog.qml</file>
+        <file>resources/hiddenShip.png</file>
+        <file>GameOverDialog.qml</file>
     </qresource>
 </RCC>

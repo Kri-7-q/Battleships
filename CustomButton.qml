@@ -9,8 +9,8 @@ ButtonStyle {
     background: Rectangle {
         radius: height / 2
         color: buttonStyle.color
-        border.color: control.activeFocus ? "black" : "gray"
-        border.width: control.activeFocus ? 2 : 1
+        border.color: control.activeFocus ? "gray" : "black"
+        border.width: control.activeFocus ? 4 : 1
     }
     label: Text {
         renderType: Text.NativeRendering

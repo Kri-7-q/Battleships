@@ -108,10 +108,30 @@ Flow {
                 visible: false
                 width: 100 * window.scaleWidth
                 height: 30 * window.scaleHeight
+                isDefault: true
                 text: qsTr("Start game")
-                style: CustomButton { }
+                style: CustomButton { color: "orange" }
                 anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: placeShipsDialog.state = "switch"
             }
         } // END column
     } // END rectangle
+
+    states: [
+        State {
+            name: "inactive"
+        },
+        State {
+            name: "active"
+            PropertyChanges { target: placeShipsDialog; visible: true; }
+            PropertyChanges { target: startButton; enabled: true; }
+        },
+        State {
+            name: "switch"
+            PropertyChanges { target: placeShipsDialog; visible: false }
+            PropertyChanges { target: gamePlayDialog; state: "active"; }
+            PropertyChanges { target: controler; localePlayersTurn: true; }
+        }
+    ]
+
 } // END flow

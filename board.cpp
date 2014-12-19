@@ -59,15 +59,15 @@ bool Board::shoot(const quint8 x, const quint8 y)
 {
     int fieldNumber = getFieldNumber(x, y);
     FieldState state = (FieldState)data(index(fieldNumber), Qt::DisplayRole).toInt();
-    if (state != GameBoardModel::emptyField) {
+    if (state != GameBoardModel::EmptyField) {
         return false;
     }
     bool isHit = data(index(fieldNumber), ShipAtPositionRole).toBool();
     if (isHit) {
-        setData(index(y, x), QVariant(), ModifyShipHealthRole);
-        setData(index(fieldNumber), QVariant(hiddenShip), ModifyFieldStateRole);
+        setData(index(fieldNumber), QVariant(), ModifyShipHealthRole);
+        setData(index(fieldNumber), QVariant(HiddenShip), ModifyFieldStateRole);
     } else {
-        setData(index(fieldNumber), QVariant(hiddenField), ModifyFieldStateRole);
+        setData(index(fieldNumber), QVariant(HiddenField), ModifyFieldStateRole);
     }
 
     return isHit;
@@ -119,13 +119,13 @@ QString Board::getFieldState(const QPoint &point) const
     int fieldNumber = getFieldNumber(point);
     FieldState state = (FieldState)data(index(fieldNumber), Qt::DisplayRole).toInt();
     switch (state) {
-    case emptyField:
+    case EmptyField:
         return emptyFieldString;
         break;
-    case hiddenField:
+    case HiddenField:
         return hiddenFieldString;
         break;
-    case hiddenShip:
+    case HiddenShip:
         return hiddenShipString;
         break;
     default:

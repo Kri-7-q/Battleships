@@ -11,6 +11,34 @@ GameBoardModel::GameBoardModel(QObject *parent) :
 }
 
 /**
+ * SLOT
+ * Reset model. Delete the whole content.
+ * Remove all items.
+ */
+void GameBoardModel::removeAll()
+{
+    beginResetModel();
+    m_shipList.clear();
+    m_fieldStateList.clear();
+    endResetModel();
+}
+
+// Q_PROPERTY - Getter
+QString GameBoardModel::destroyedShipName() const
+{
+    return m_destroyedShipName;
+}
+// Q_PROPERTY - Setter
+void GameBoardModel::setDestroyedShipName(const QString &destroyedShipName)
+{
+    if (m_destroyedShipName != destroyedShipName) {
+        m_destroyedShipName = destroyedShipName;
+        emit destroyedShipNameChanged();
+    }
+}
+
+
+/**
  * Property setter
  * Set game board width.
  * @param width
@@ -18,7 +46,9 @@ GameBoardModel::GameBoardModel(QObject *parent) :
 void GameBoardModel::setColumns(const int width)
 {
     if (width != m_boardRect.width()) {
+        beginResetModel();
         m_boardRect.setWidth(width);
+        endResetModel();
         emit columnsChanged();
     }
 }
@@ -31,7 +61,9 @@ void GameBoardModel::setColumns(const int width)
 void GameBoardModel::setRows(const int height)
 {
     if (height != m_boardRect.height()) {
+        beginResetModel();
         m_boardRect.setHeight(height);
+        endResetModel();
         emit rowsChanged();
     }
 }
@@ -87,31 +119,33 @@ QVariant GameBoardModel::data(const QModelIndex &index, int role) const
     QVariant value;
     switch (role) {
     case Qt::DisplayRole:
-        value = QVariant(m_fieldStateList.value(index.row(), emptyField));
+        value = QVariant(m_fieldStateList.value(index.row(), EmptyField));
         break;
     case DisplayAllRole: {
-        FieldState fieldState = m_fieldStateList.value(index.row(), emptyField);
-        if (fieldState != emptyField) {
+        FieldState fieldState = m_fieldStateList.value(index.row(), EmptyField);
+        if (fieldState != EmptyField) {
             return QVariant(fieldState);
         }
         QPoint point = getPointObject(index.row());
         for (const Ship ship : m_shipList) {
             if (ship.isOnShip(point)) {
-                return QVariant(placedShip);
+                return QVariant(PlacedShip);
             }
         }
-        value = QVariant(emptyField);
+        value = QVariant(EmptyField);
         break;
     }
-    case ShipAtPositionRole:
+    case ShipAtPositionRole: {
         value = QVariant(false);
-        for (const Ship ship : m_shipList) {
-            if (ship.isOnShip(index.column(), index.row())) {
+        QPoint point = getPointObject(index.row());
+        for (const Ship& ship : m_shipList) {
+            if (ship.isOnShip(point)) {
                 value = QVariant(true);
                 break;
             }
         }
         break;
+    }
     case HasUndestroiedShipRole:
         value = QVariant(false);
         for (const Ship ship : m_shipList) {
@@ -158,14 +192,19 @@ bool GameBoardModel::setData(const QModelIndex &index, const QVariant &value, in
         emit dataChanged(index, index);
         break;
     }
-    case ModifyShipHealthRole:
+    case ModifyShipHealthRole: {
+        QPoint point = getPointObject(index.row());
         for (Ship &ship : m_shipList) {
-            if (ship.position().contains(index.column(), index.row())) {
+            if (ship.position().contains(point)) {
                 ship.addHit();
+                if (ship.isDestroyed()) {
+                    setDestroyedShipName(ship.name());
+                }
                 break;
             }
         }
         break;
+    }
     default:
         break;
     }

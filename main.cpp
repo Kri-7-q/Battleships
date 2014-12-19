@@ -3,7 +3,6 @@
 #include <QtQml>
 #include "battleships.h"
 #include "consoleinterface.h"
-#include "board.h"
 
 
 int main(int argc, char *argv[])

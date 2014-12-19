@@ -5,7 +5,7 @@ import QtQuick.Controls 1.2
 // Dialog to enter game board size and network address.
 Rectangle {
     color: "goldenrod"
-    border.color: "black"
+    border.color: "gray"
     border.width: 3
     property int margin: 20
     anchors.margins: margin
@@ -39,7 +39,6 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             TextField {
                 id: inputGameBoradWidth
-                focus: true
                 width: 50
                 height: parent.height
                 placeholderText: qsTr("width")
@@ -82,6 +81,14 @@ Rectangle {
                 height: submitButtonRow.height
                 text: qsTr("Single Player")
                 style: CustomButton { fontSize: 20 }
+                onClicked: {
+                    gameBoardModel.columns = inputGameBoradWidth.text
+                    gameBoardModel.rows = inputGameBoardHeight.text
+                    gameBoardModelFoe.columns = gameBoardModel.columns
+                    gameBoardModelFoe.rows = gameBoardModel.rows
+                    controler.randomlyPlaceShips()
+                    boardSizeDialog.state = "switch"
+                }
             }
             Rectangle {
                 width: 50
@@ -97,5 +104,24 @@ Rectangle {
             }
         }
     }
+
+    states: [
+        State {
+            name: "inactive"
+        },
+        State {
+            name: "active"
+            PropertyChanges { target: boardSizeDialog; visible: true; }
+            PropertyChanges { target: singlePlayerSubmitButton; enabled: true; }
+            PropertyChanges { target: multiplayerSubmitButtom; enabled: true; }
+            PropertyChanges { target: inputGameBoradWidth; focus: true; }
+        },
+        State {
+            name: "switch"
+            PropertyChanges { target: boardSizeDialog; visible: false; }
+            PropertyChanges { target: placeShipsDialog; state: "active"; }
+        }
+    ]
+
 }
 

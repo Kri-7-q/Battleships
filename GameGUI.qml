@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import QtQuick.Window 2.0
 import Controler 1.0
 import Models 1.0
 
@@ -14,10 +15,6 @@ ApplicationWindow {
     property double scaleHeight: height / 480
     property double scale: scaleWidth > scaleHeight ? scaleHeight : scaleWidth
 
-    Controler {
-        id: controler
-        playerName: "Christian"
-    }
 
     // ------------------------------
     // Models
@@ -26,11 +23,19 @@ ApplicationWindow {
         id: gameBoardModel
         columns: 10
         rows: 10
+        onDestroyedShipNameChanged: {
+            var text = "Your " + destroyedShipName + " was desroyed !"
+            gamePlayDialog.infoTextArea.append(text)
+        }
     }
     GameBoardModel {
         id: gameBoardModelFoe
         columns: 10
         rows: 10
+        onDestroyedShipNameChanged: {
+            var text = "You destroyed the " + destroyedShipName + " of your foe !"
+            gamePlayDialog.infoTextArea.append(text)
+        }
     }
 
     // Draw background
@@ -40,59 +45,57 @@ ApplicationWindow {
         color: "black"
     }
 
+    // -----------------------------
+    // Controler
+    // -----------------------------
+    Controler {
+        id: controler
+        playersGameBoard: gameBoardModel
+        foesGameBoard: gameBoardModelFoe
+        onInfoTextChanged: gamePlayDialog.infoTextArea.append(infoText)
+    }
+
     // ----------------------------------------------------------
     // Dialogs
     // -----------------------------------------------------------
     // Dialog to insert my name.
     PlayerNameDialog {
         // Background color "gold".
+        id: nameDialog
         visible: false
+        state: "active"
     }
 
     // Dialog to specify the game board size.
     BoardSizeDialog {
+        id: boardSizeDialog
         visible: false
         width: parent.width * 0.8
         height: parent.height * 0.8
         anchors.centerIn: parent
+        state: "inactive"
     }
 
     // Dialog to place ships.
     PlaceShipsDialog {
+        id: placeShipsDialog
         visible: false
+        state: "inactive"
     }
 
     // Game play GUI
-    Flow {
-        anchors.fill: parent
-        anchors.margins: 10
-        spacing: 40
-        property int widthBoardFoe: (width - 40) * 0.7
-        property int widthBoardOwn: (width - 40) * 0.3
+    GamePlayDialog {
+        id: gamePlayDialog
+        visible: false
+        state: "inactive"
+    }
 
-        GameBoardView {
-            id: playGameBoard
-            availableWidth: parent.widthBoardFoe
-            availableHeight: parent.height
-            name: qsTr("Foe")
-            delegate: FoeGameBoardDelegate { }
-            model: gameBoardModelFoe
-        }
-
-        Column {
-            width: parent.widthBoardOwn
-            height: parent.height
-            anchors.margins: 10
-
-            GameBoardView {
-                id: ownGameBoard
-                availableWidth: parent.width
-                availableHeight: parent.height / 2
-                name: controler.playerName
-                delegate: OwnGameBoardDelegate { }
-                model: gameBoardModel
-            }
-        }
+    // Game over dialog
+    GameOverDialog {
+        id: gameOverDialog
+        width: 500
+        height: 200
+        anchors.centerIn: parent
     }
 }
 
