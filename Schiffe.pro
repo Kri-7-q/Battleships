@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     board.cpp \
     ship.cpp \
     consoleinterface.cpp \
-    gameboardmodel.cpp
+    gameboardmodel.cpp \
+    networkinterface.cpp
 
 HEADERS += \
     battleships.h \
@@ -25,7 +26,8 @@ HEADERS += \
     ship.h \
     consoleinterface.h \
     Utilities.h \
-    gameboardmodel.h
+    gameboardmodel.h \
+    networkinterface.h
 
 OTHER_FILES +=
 
