@@ -39,6 +39,31 @@ void Ship::addHit()
 }
 
 /**
+ * Returns a QPoint list. The points are the position of
+ * the ship on the game board.
+ * @return list
+ */
+QList<QPoint> Ship::getPointList() const
+{
+    QList<QPoint> list;
+    QRect shipRect = m_position;
+    shipRect.normalized();
+    if (shipRect.width() == 1) {
+        for (int y=0; y<shipRect.height(); ++y) {
+            QPoint point(shipRect.x(), shipRect.y() + y);
+            list.append(point);
+        }
+    } else {
+        for (int x=0; x<shipRect.width(); ++x) {
+            QPoint point(shipRect.x() + x, shipRect.y());
+            list.append(point);
+        }
+    }
+
+    return list;
+}
+
+/**
  * STATIC
  * Creates a rectangle of the ships position in the map.
  * @param point             The point which the user has chosen.

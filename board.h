@@ -31,22 +31,22 @@ private:
 public:
     // Methods
     bool place(Ship ship, const quint8 x, const quint8 y, const Ship::Direction d);
-    bool shoot(const quint8 x, const quint8 y);
+    const Ship* shoot(const quint8 x, const quint8 y);
     void print();
     QSize getGameBoardSize()                    { return gameBoardRect().size(); }
     bool hasUndestroyedShip();
     bool isWithinGameBoard(const QPoint &pt)         { return gameBoardRect().contains(pt); }
+    int getFieldNumber(const QPoint &point) const               { return point.y() * columns() + point.x(); }
+    int getFieldNumber(const quint8 x, const quint8 y) const    { return y * columns() + x; }
 
 private:
     QString getFieldState(const QPoint &point) const;
-    int getFieldNumber(const QPoint &point) const               { return point.y() * columns() + point.x(); }
-    int getFieldNumber(const quint8 x, const quint8 y) const    { return y * columns() + x; }
 
 signals:
 
 public slots:
     bool placeShip(const int length, const QString name, const int index, const int angel);
-    bool shootAt(const int index);
+    const Ship* shootAt(const int index);
 };
 
 #endif // BOARD_H

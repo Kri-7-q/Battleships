@@ -55,8 +55,9 @@ bool Board::place(Ship ship, const quint8 x, const quint8 y, const Ship::Directi
  * @param y
  * @return          True if ship was hidden.
  */
-bool Board::shoot(const quint8 x, const quint8 y)
+const Ship* Board::shoot(const quint8 x, const quint8 y)
 {
+    const Ship *destroyedShip = 0;
     int fieldNumber = getFieldNumber(x, y);
     FieldState state = (FieldState)data(index(fieldNumber), Qt::DisplayRole).toInt();
     if (state != GameBoardModel::EmptyField) {
@@ -64,13 +65,13 @@ bool Board::shoot(const quint8 x, const quint8 y)
     }
     bool isHit = data(index(fieldNumber), ShipAtPositionRole).toBool();
     if (isHit) {
-        setData(index(fieldNumber), QVariant(), ModifyShipHealthRole);
+        destroyedShip = modifyShipHealth(fieldNumber);
         setData(index(fieldNumber), QVariant(HiddenShip), ModifyFieldStateRole);
     } else {
         setData(index(fieldNumber), QVariant(HiddenField), ModifyFieldStateRole);
     }
 
-    return isHit;
+    return destroyedShip;
 }
 
 /**
@@ -158,7 +159,7 @@ bool Board::placeShip(const int length, const QString name, const int index, con
  * @param index         The index of game board field.
  * @return              True if a ship was hidden.
  */
-bool Board::shootAt(const int index)
+const Ship* Board::shootAt(const int index)
 {
     QPoint point = getPointObject(index);
 

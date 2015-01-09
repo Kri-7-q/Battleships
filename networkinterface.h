@@ -35,12 +35,13 @@ public:
 
 signals:
     void hasConnection();
-    void receivedMessage(const QJsonDocument *messgae);
+    void receivedMessage(QJsonDocument *messgae);
+    void networkError(const QString &error);
 
 public slots:
-    void initializeServer(const quint16 port);
+    void initializeServer(const QString serverAddress, const quint16 port);
     void initializeClientConnection(const QString serverAddress, const quint16 port);
-    void sendMessage(const QJsonDocument *message);
+    void sendMessage(QJsonDocument *message);
     QJsonDocument* readMessage();
     void closeCennection();
 

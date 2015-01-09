@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
-import Controler 1.0
 import Models 1.0
+import Controler 1.0
 
 
 ApplicationWindow {
@@ -23,8 +23,9 @@ ApplicationWindow {
         id: gameBoardModel
         columns: 10
         rows: 10
-        onDestroyedShipNameChanged: {
-            var text = "Your " + destroyedShipName + " was desroyed !"
+        playerName: "Christian"
+        onShipDestroyed: {
+            var text = "Your " + destroyedShipName + " sunk !"
             gamePlayDialog.infoTextArea.append(text)
         }
     }
@@ -32,11 +33,23 @@ ApplicationWindow {
         id: gameBoardModelFoe
         columns: 10
         rows: 10
-        onDestroyedShipNameChanged: {
-            var text = "You destroyed the " + destroyedShipName + " of your foe !"
+        playerName: "Foe"
+        onShipDestroyed: {
+            var text = destroyedShipName + " of enemy sunk !"
             gamePlayDialog.infoTextArea.append(text)
         }
     }
+
+//    // -----------------------------
+//    // Controler
+//    // -----------------------------
+//    Controler {
+//        id: controler
+//        objectName: "Battleships"
+//        playersGameBoard: gameBoardModel
+//        foesGameBoard: gameBoardModelFoe
+//        onInfoTextChanged: gamePlayDialog.infoTextArea.append(infoText)
+//    }
 
     // Draw background
     Rectangle {
@@ -45,22 +58,12 @@ ApplicationWindow {
         color: "black"
     }
 
-    // -----------------------------
-    // Controler
-    // -----------------------------
-    Controler {
-        id: controler
-        playersGameBoard: gameBoardModel
-        foesGameBoard: gameBoardModelFoe
-        onInfoTextChanged: gamePlayDialog.infoTextArea.append(infoText)
-    }
 
     // ----------------------------------------------------------
     // Dialogs
     // -----------------------------------------------------------
     // Dialog to insert my name.
     PlayerNameDialog {
-        // Background color "gold".
         id: nameDialog
         visible: false
         state: "active"
@@ -70,9 +73,6 @@ ApplicationWindow {
     BoardSizeDialog {
         id: boardSizeDialog
         visible: false
-        width: parent.width * 0.8
-        height: parent.height * 0.8
-        anchors.centerIn: parent
         state: "inactive"
     }
 
@@ -81,6 +81,17 @@ ApplicationWindow {
         id: placeShipsDialog
         visible: false
         state: "inactive"
+    }
+
+    // NetworkDialog
+    NetworkDialog {
+        id: networkDialog
+        visible: false
+    }
+
+    ShowGameOffer {
+        id: showGameOffer
+        visible: false
     }
 
     // Game play GUI

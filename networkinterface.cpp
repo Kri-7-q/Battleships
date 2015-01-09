@@ -18,9 +18,9 @@ NetworkInterface::NetworkInterface(QObject *parent) :
  * connections.
  * @param port
  */
-void NetworkInterface::initializeServer(const quint16 port)
+void NetworkInterface::initializeServer(const QString serverAddress, const quint16 port)
 {
-    QHostAddress address("192.168.0.199");
+    QHostAddress address(serverAddress);
     m_server.listen(address, port);
 }
 
@@ -46,7 +46,7 @@ void NetworkInterface::takeClientConnection()
 void NetworkInterface::initializeClientConnection(const QString serverAddress, const quint16 port)
 {
     m_pSocket = new QTcpSocket();
-    connect(m_pSocket, SIGNAL(error()), this, SLOT(socketError()));
+    connect(m_pSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
     connect(m_pSocket, SIGNAL(connected()), this, SLOT(clientConnected()));
     m_pSocket->connectToHost(serverAddress, port);
 }
@@ -69,41 +69,31 @@ void NetworkInterface::clientConnected()
  */
 QString NetworkInterface::socketError(QAbstractSocket::SocketError error)
 {
-    QString errorMessage;
     switch (error) {
     case QAbstractSocket::ConnectionRefusedError:
-        errorMessage = "The connection was refused by the peer (or timed out).";
         break;
     case QAbstractSocket::RemoteHostClosedError:
-        errorMessage = "The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
         break;
     case QAbstractSocket::SocketAccessError:
-        errorMessage = "The socket operation failed because the application lacked the required privileges.";
         break;
     case QAbstractSocket::SocketResourceError:
-        errorMessage = "The local system ran out of resources (e.g., too many sockets).";
         break;
     case QAbstractSocket::SocketTimeoutError:
-        errorMessage = "The socket operation timed out.";
         break;
     case QAbstractSocket::DatagramTooLargeError:
-        errorMessage = "The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
         break;
     case QAbstractSocket::NetworkError:
-        errorMessage = "An error occurred with the network (e.g., the network cable was accidentally plugged out).";
         break;
     case QAbstractSocket::UnsupportedSocketOperationError:
-        errorMessage = "The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
         break;
     case QAbstractSocket::OperationError:
-        errorMessage = "An operation was attempted while the socket was in a state that did not permit it.";
         break;
     default:
-        errorMessage = "An unknown error occurred.";
         break;
     }
+    emit networkError(m_pSocket->errorString());
 
-    return errorMessage;
+    return m_pSocket->errorString();
 }
 
 /**
@@ -118,9 +108,9 @@ QHash<QString, QStringList> NetworkInterface::getAdapterAndAddresses()
     QList<QNetworkInterface> interfaceList = getConnectedInterfaces();
     for (QNetworkInterface interface : interfaceList) {
         QStringList ipList;
-        QList<QHostAddress> addressList = interface.allAddresses();
-        for (QHostAddress address : addressList) {
-            ipList << address.toString();
+        QList<QNetworkAddressEntry> addressList = interface.addressEntries();
+        for (QNetworkAddressEntry address : addressList) {
+            ipList << address.ip().toString();
         }
         connectionTable.insert(interface.name(), ipList);
     }
@@ -137,15 +127,13 @@ QHash<QString, QStringList> NetworkInterface::getAdapterAndAddresses()
  */
 QList<QNetworkInterface> NetworkInterface::getConnectedInterfaces()
 {
-    QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
-    int i=0;
-    while (i<=interfaceList.size()) {
-        QNetworkInterface interface = interfaceList.at(i);
-        if (interface.hardwareAddress().isEmpty() &&
-            interface.allAddresses().isEmpty()) {
-            interfaceList.removeFirst();
-        } else {
-            ++i;
+    QList<QNetworkInterface> interfaceListAll = QNetworkInterface::allInterfaces();
+    QList<QNetworkInterface> interfaceList;
+    for (QNetworkInterface interface : interfaceListAll) {
+        if (! interface.hardwareAddress().isEmpty()) {
+            if (! interface.addressEntries().isEmpty()) {
+                interfaceList.append(interface);
+            }
         }
     }
 
@@ -183,7 +171,7 @@ QJsonDocument *NetworkInterface::getJsonDocument(const QList<QByteArray> message
  * can consist of a single QJsonObject or an QJsonArray.
  * @param message       The message as a Json object.
  */
-void NetworkInterface::sendMessage(const QJsonDocument *message)
+void NetworkInterface::sendMessage(QJsonDocument *message)
 {
     QByteArray data;
     if (message->isObject()) {
@@ -197,6 +185,7 @@ void NetworkInterface::sendMessage(const QJsonDocument *message)
     }
     m_pSocket << data;
     m_pSocket->flush();
+    delete message;
 }
 
 /**

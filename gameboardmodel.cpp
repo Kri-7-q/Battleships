@@ -6,7 +6,8 @@
  */
 GameBoardModel::GameBoardModel(QObject *parent) :
     QAbstractListModel(parent),
-    m_boardRect(0,0,0,0)
+    m_boardRect(0,0,0,0),
+    m_playerName("")
 {
 }
 
@@ -22,21 +23,6 @@ void GameBoardModel::removeAll()
     m_fieldStateList.clear();
     endResetModel();
 }
-
-// Q_PROPERTY - Getter
-QString GameBoardModel::destroyedShipName() const
-{
-    return m_destroyedShipName;
-}
-// Q_PROPERTY - Setter
-void GameBoardModel::setDestroyedShipName(const QString &destroyedShipName)
-{
-    if (m_destroyedShipName != destroyedShipName) {
-        m_destroyedShipName = destroyedShipName;
-        emit destroyedShipNameChanged();
-    }
-}
-
 
 /**
  * Property setter
@@ -192,19 +178,6 @@ bool GameBoardModel::setData(const QModelIndex &index, const QVariant &value, in
         emit dataChanged(index, index);
         break;
     }
-    case ModifyShipHealthRole: {
-        QPoint point = getPointObject(index.row());
-        for (Ship &ship : m_shipList) {
-            if (ship.position().contains(point)) {
-                ship.addHit();
-                if (ship.isDestroyed()) {
-                    setDestroyedShipName(ship.name());
-                }
-                break;
-            }
-        }
-        break;
-    }
     default:
         break;
     }
@@ -240,4 +213,41 @@ QPoint GameBoardModel::getPointObject(const int fieldNumber) const
     point.setY(fieldNumber / columns());
 
     return point;
+}
+
+// Q_PROPERTY - Getter
+QString GameBoardModel::playerName() const
+{
+    return m_playerName;
+}
+
+// Q_PROPERTY - Setter
+void GameBoardModel::setPlayerName(const QString &name)
+{
+    if (m_playerName != name) {
+        m_playerName = name;
+        emit playerNameChanged();
+    }
+}
+
+/**
+ * If a ship was hidden the health of ship must be
+ * modified.
+ * @param index
+ * @return          The ship which was hidden or 0.
+ */
+const Ship* GameBoardModel::modifyShipHealth(const int index)
+{
+    QPoint point = getPointObject(index);
+    for (Ship &ship : m_shipList) {
+        if (ship.position().contains(point)) {
+            ship.addHit();
+            if (ship.isDestroyed()) {
+                emit shipDestroyed(ship.name());
+            }
+            return &ship;
+        }
+    }
+
+    return 0;
 }

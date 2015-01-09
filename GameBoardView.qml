@@ -6,7 +6,6 @@ Column {
     id: view
     property int availableWidth: 100
     property int availableHeight: 100
-    property alias name: headerTitle.text
     readonly property alias cellSide: boardFrame.cellSide
     readonly property alias boardRect: boardFrame
     property Component delegate: Rectangle { width: cellSide; height: cellSide; color: "transparent" }
@@ -25,6 +24,7 @@ Column {
             id: headerTitle
             font.bold: true
             font.pixelSize: 22 * window.scale
+            text: model.playerName
             anchors.centerIn: parent
         }
     }

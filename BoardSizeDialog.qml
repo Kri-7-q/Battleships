@@ -1,9 +1,13 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import Controler 1.0
 
 
 // Dialog to enter game board size and network address.
 Rectangle {
+    width: parent.width * 0.8
+    height: parent.height * 0.8
+    anchors.centerIn: parent
     color: "goldenrod"
     border.color: "gray"
     border.width: 3
@@ -82,12 +86,13 @@ Rectangle {
                 text: qsTr("Single Player")
                 style: CustomButton { fontSize: 20 }
                 onClicked: {
+                    controler.playerMode = Controler.SinglePlayer
                     gameBoardModel.columns = inputGameBoradWidth.text
                     gameBoardModel.rows = inputGameBoardHeight.text
                     gameBoardModelFoe.columns = gameBoardModel.columns
                     gameBoardModelFoe.rows = gameBoardModel.rows
-                    controler.randomlyPlaceShips()
-                    boardSizeDialog.state = "switch"
+                    controler.randomlyPlaceShips(gameBoardModelFoe)
+                    controler.currentView = "PlaceShipsDialog"
                 }
             }
             Rectangle {
@@ -101,6 +106,12 @@ Rectangle {
                 height: submitButtonRow.height
                 text: qsTr("Multi Player")
                 style: CustomButton { fontSize: 20 }
+                onClicked: {
+                    controler.playerMode = Controler.MultiPlayer
+                    gameBoardModel.columns = inputGameBoradWidth.text
+                    gameBoardModel.rows = inputGameBoardHeight.text
+                    controler.currentView = "PlaceShipsDialog"
+                }
             }
         }
     }
@@ -108,18 +119,16 @@ Rectangle {
     states: [
         State {
             name: "inactive"
+            when: controler.currentView !== "BoardSizeDialog"
+            PropertyChanges { target: boardSizeDialog; visible: false; }
         },
         State {
             name: "active"
+            when: controler.currentView === "BoardSizeDialog"
             PropertyChanges { target: boardSizeDialog; visible: true; }
             PropertyChanges { target: singlePlayerSubmitButton; enabled: true; }
             PropertyChanges { target: multiplayerSubmitButtom; enabled: true; }
             PropertyChanges { target: inputGameBoradWidth; focus: true; }
-        },
-        State {
-            name: "switch"
-            PropertyChanges { target: boardSizeDialog; visible: false; }
-            PropertyChanges { target: placeShipsDialog; state: "active"; }
         }
     ]
 

@@ -63,7 +63,7 @@ Rectangle {
     states: [
         State {
             name: "endPlaceShipsDialog"
-            PropertyChanges { target: startButton; visible: true; }
+            PropertyChanges { target: placeShipsView; allShipsSet: true }
             PropertyChanges { target: shipName; text: qsTr("No more ships available."); }
             PropertyChanges { target: shipImage; visible: false; }
             PropertyChanges { target: shipPointer; visible: false; }

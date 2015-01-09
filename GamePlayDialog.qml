@@ -14,7 +14,6 @@ Flow {
         id: playGameBoard
         availableWidth: parent.widthBoardFoe
         availableHeight: parent.height
-        name: qsTr("Foe")
         delegate: FoeGameBoardDelegate { }
         model: gameBoardModelFoe
     }
@@ -29,7 +28,6 @@ Flow {
             id: ownGameBoard
             availableWidth: parent.width
             availableHeight: parent.height / 2
-            name: controler.playerName
             delegate: OwnGameBoardDelegate { }
             model: gameBoardModel
             anchors.horizontalCenter: parent.horizontalCenter
@@ -49,14 +47,13 @@ Flow {
     states: [
         State {
             name: "inactive"
+            when: controler.currentView !== "GamePlayDialog"
+            PropertyChanges { target: gamePlayDialog; visible: false; }
         },
         State {
             name: "active"
+            when: controler.currentView === "GamePlayDialog"
             PropertyChanges { target: gamePlayDialog; visible: true; }
-        },
-        State {
-            when: controler.isGameOver
-            PropertyChanges { target: gameOverDialog; state: "active"; }
         }
     ]
 

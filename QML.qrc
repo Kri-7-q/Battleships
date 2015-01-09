@@ -18,5 +18,9 @@
         <file>GamePlayDialog.qml</file>
         <file>resources/hiddenShip.png</file>
         <file>GameOverDialog.qml</file>
+        <file>NetworkDialog.qml</file>
+        <file>Spacer.qml</file>
+        <file>ShowGameOffer.qml</file>
+        <file>NetworkErrorDialog.qml</file>
     </qresource>
 </RCC>

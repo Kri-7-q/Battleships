@@ -34,7 +34,7 @@ Rectangle {
                 onClicked: {
                     gameBoardModel.removeAll()
                     gameBoardModelFoe.removeAll()
-                    gameOverDialog.state = "restart"
+                    controler.currentView = "PlayerNameDialog"
                 }
             }
             Rectangle {
@@ -55,16 +55,13 @@ Rectangle {
     states: [
         State {
             name: "inactive"
+            when: controler.currentView !== "GameOverDialog"
+            PropertyChanges { target: gameOverDialog; visible: false; }
         },
         State {
             name: "active"
+            when: controler.currentView === "GameOverDialog"
             PropertyChanges { target: gameOverDialog; visible: true; }
-        },
-        State {
-            name: "restart"
-            PropertyChanges { target: gameOverDialog; visible: false; }
-            PropertyChanges { target: gamePlayDialog; visible: false; }
-            PropertyChanges { target: nameDialog; visible: true; }
         }
     ]
 } // End rectangle

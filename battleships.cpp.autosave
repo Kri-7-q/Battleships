@@ -433,6 +433,7 @@ void Battleships::takeGameOffer(const QJsonObject &object)
     list << options.value("board_size_y").toString();
     list << options.value("ships_present").toString();
     setGameOfferValueList(list);
+    setCurrentView("GameOfferView");
 }
 
 /**
@@ -449,6 +450,7 @@ void Battleships::gameOfferReplay(const QJsonObject &object)
     if (accepted) {
         m_foesGameBoard->setPlayerName(name);
         setLocalePlayersTurn(true);
+        setCurrentView("GamePlayDialog");
     }
 }
 

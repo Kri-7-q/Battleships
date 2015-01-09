@@ -1,90 +1,29 @@
+#include "battleships.h"
+#include "consoleinterface.h"
+#include "networkinterface.h"
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
-#include "battleships.h"
-#include "consoleinterface.h"
 
 
 int main(int argc, char *argv[])
 {
-    // If game was started with option -c it will launch in console.
-    if (true /*argc < 2 && QString(argv[1]) != "-c"*/) {
-        QApplication app(argc, argv);
-        qmlRegisterType<Board>("Models", 1, 0, "GameBoardModel");
-        qmlRegisterType<Battleships>("Controler", 1, 0, "Controler");
-        QQmlApplicationEngine engine;
-        engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));
+    QApplication app(argc, argv);
 
-        return app.exec();
+    Battleships controler;
+    NetworkInterface interface;
+    controler.setNetworkInterface(&interface);
+    QObject::connect(&interface, SIGNAL(receivedMessage(QJsonDocument*)), &controler, SLOT(receiveMessage(QJsonDocument*)));
+    QObject::connect(&controler, SIGNAL(sendMessage(QJsonDocument*)), &interface, SLOT(sendMessage(QJsonDocument*)));
+    QObject::connect(&interface, SIGNAL(hasConnection()), &controler, SLOT(hasConnection()));
+    QObject::connect(&interface, SIGNAL(networkError(QString)), &controler, SLOT(networkConnectionError(QString)));
 
-    } else {
+    qmlRegisterType<Board>("Models", 1, 0, "GameBoardModel");
+    qmlRegisterType<Battleships>("Controler", 1, 0, "Controler");
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("controler", &controler);
+    engine.load(QUrl(QStringLiteral("qrc:/GameGUI.qml")));
 
-        Battleships battleships;
-        ConsoleInterface interface;
-        // Player name
-        QString name = interface.getPlayerName();
-        battleships.setPlayerName(name);
-        // Board size
-        QSize boardSize;
-        do {
-            boardSize = interface.getBoardSize();
-        } while(! boardSize.isValid());
-        Board gameBoard(boardSize.width(), boardSize.height());
-        // Want custom ships ?
-        bool useCustomShips = interface.wantCustomShips();
-        QHash<QString, int> shipSizeList;
-        if (useCustomShips) {
-            shipSizeList = interface.getCustomShips();
-        } else {
-            shipSizeList = battleships.defaultShips();
-        }
-        // Place ships
-        QList<QString> shipNameList = shipSizeList.keys();
-        for (QString description : shipNameList) {
-            bool placed = false;
-            while (! placed) {
-                QString positionString = interface.getPositionForShip(description);
-                ShipPosition position;
-                if (positionString.isEmpty()) {
-                    position = battleships.getRandomShipPosition(gameBoard.getGameBoardSize());
-                } else {
-                    position = battleships.getShipPosition(positionString);
-                }
-                int length = shipSizeList.value(description);
-                placed = gameBoard.place(Ship(length), position.x, position.y, position.direction);
-            }
-        }
-        // Game loop
-        bool running = true;
-        while (running) {
-            interface.drawGameBoard(gameBoard);
-            // Get shoot from player.
-            QString input = interface.getShot();
-            if (input == "quit") {
-                interface.printText("Bye, Bye ...");
-                break;
-            }
-            // Place shot on game board.
-            QPoint shoot = battleships.getPointObject(input);
-            if (! gameBoard.isWithinGameBoard(shoot)) {
-                interface.printText("Shot was not within the game board.");
-                continue;
-            }
-            bool isHit = gameBoard.shoot(shoot.x(), shoot.y());
-            if (isHit) {
-                interface.printText("A ship was hidden by this shot.");
-            }
-            battleships.addShoot();
-            // Are there undestroyed ships left ?
-            if (! gameBoard.hasUndestroyedShip()) {
-                running = false;
-                QString text = battleships.playerName() + " you have destroyed all ships.";
-                interface.printText(text);
-                text = QString("You have taken %1 shots.").arg(battleships.shotsFired());
-                interface.printText(text);
-            }
-        }
+    return app.exec();
 
-        return 1;
-    }
 }

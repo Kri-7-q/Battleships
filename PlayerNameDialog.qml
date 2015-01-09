@@ -5,7 +5,7 @@ import QtQuick.Controls 1.2
 // Dialog to enter players name
 Rectangle {
     width: parent.width * 0.8
-    height: dialogColumn.height + 100
+    height: parent.height * 0.8
     anchors.centerIn: parent
     scale: window.scale
     color: "goldenrod"
@@ -69,7 +69,7 @@ Rectangle {
             anchors.horizontalCenter: dialogColumn.horizontalCenter
 
             TextField {
-                id: playerName
+                id: playerNameField
                 height: nameForm.height
                 width: 350
                 font.pixelSize: 26
@@ -90,8 +90,11 @@ Rectangle {
                 isDefault: true
                 style: CustomButton {  }
                 onClicked: {
-                    controler.playerName = playerName.text
-                    nameDialog.state = "switch"
+                    gameBoardModel.playerName = playerNameField.text
+                    controler.playersGameBoard = gameBoardModel
+                    controler.foesGameBoard = gameBoardModelFoe
+                    controler.playerName = playerNameField.text
+                    controler.currentView = "BoardSizeDialog"
                 }
             }
         }
@@ -100,14 +103,15 @@ Rectangle {
     states: [
         State {
             name: "active"
+            when: controler.currentView === "PlayerNameDialog"
             PropertyChanges { target: nameDialog; visible: true; }
-            PropertyChanges { target: playerName; focus: true; }
+            PropertyChanges { target: playerNameField; focus: true; }
             PropertyChanges { target: submitButton; enabled: true; }
         },
         State {
-            name: "switch"
+            name: "inactive"
+            when: controler.currentView !== "PlayerNameDialog"
             PropertyChanges { target: nameDialog; visible: false; }
-            PropertyChanges { target: boardSizeDialog; state: "active"; }
         }
 
     ]

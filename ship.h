@@ -11,6 +11,7 @@
 #define SHIP_H
 #include <QString>
 #include <QRect>
+#include <QList>
 
 class Ship
 {
@@ -36,6 +37,7 @@ public:
     void setShipsPosition(const QRect positionRect)     { m_position = positionRect; }
     QString name() const                                { return m_name; }
     void setName(const QString &name)                   { m_name = name; }
+    QList<QPoint> getPointList() const;
 
     // Static members
     static QRect getShipPositionRect(const int x, const int y, const quint8 m_length, const Direction direction);

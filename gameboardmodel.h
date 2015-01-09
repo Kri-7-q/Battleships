@@ -13,7 +13,7 @@ class GameBoardModel : public QAbstractListModel
     Q_ENUMS(FieldState)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
-    Q_PROPERTY(QString destroyedShipName READ destroyedShipName NOTIFY destroyedShipNameChanged)
+    Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
 
 public:
     explicit GameBoardModel(QObject *parent = 0);
@@ -21,21 +21,21 @@ public:
     enum UserRoles { ShipAtPositionRole = Qt::UserRole + 1,
                      HasUndestroiedShipRole,
                      ModifyFieldStateRole,
-                     ModifyShipHealthRole,
-                     PlaceShipsRole,
-                     DisplayAllRole };
+                     DisplayAllRole,
+                     PlaceShipsRole };
     enum FieldState { EmptyField, HiddenField, HiddenShip, PlacedShip };
 
 private:
     QRect m_boardRect;
     QList<Ship> m_shipList;
     QHash<int, FieldState> m_fieldStateList;
-    QString m_destroyedShipName;
+    QString m_playerName;
 
 signals:
     void columnsChanged();
     void rowsChanged();
-    void destroyedShipNameChanged();
+    void shipDestroyed(const QString shipName);
+    void playerNameChanged();
 
 public slots:
     void removeAll();
@@ -48,18 +48,19 @@ public:
     QRect gameBoardRect() const           { return m_boardRect; }
     FieldState fieldState() const;
     void setFieldState(const FieldState state);
+    QPoint getPointObject(const int fieldNumber) const;
+    QString playerName() const;
+    void setPlayerName(const QString &name);
 
     // QAbstractItemModel interface
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
     QHash<int, QByteArray> roleNames() const;
-    QString destroyedShipName() const;
-    void setDestroyedShipName(const QString &destroyedShipName);
 
 protected:
     bool placeShipToGameBoard(const Ship &newShip, int topLeft, int bottomRight);
-    QPoint getPointObject(const int fieldNumber) const;
+    const Ship* modifyShipHealth(const int index);
 };
 
 #endif // GAMEBOARDMODEL_H
